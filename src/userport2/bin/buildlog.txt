@@ -3,13 +3,13 @@ flex pass 1
 flex pass 2
 flex pass 3
 Output pass
-Writing prg file: userport1.prg
+Writing prg file: userport2.prg
 
 Memory Map
 ----------
 Default-segment:
   $1001-$100c Basic Upstart
-  $1100-$11a2 Unnamed
+  $1100-$1360 Unnamed
 
-Writing Vice symbol file: userport1.vs
-Writing Symbol file: userport1.sym
+Writing Vice symbol file: userport2.vs
+Writing Symbol file: userport2.sym

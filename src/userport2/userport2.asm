@@ -12,22 +12,80 @@ start:
     lda #$08        // 8 => Black border / Black background
     sta $900F       // 900F (36879) : Color of border and background 
     jsr $e55f       // ROM Clear screen
+
+    lda #$01
+    sta cursor
+
 display:    
     
     jsr draw_text
-
-    lda #81 // Just add some extra charaters on screen for fun
-    sta $1E00
-    sta $1E14
+    jsr draw_instr
 
 update_portb:
-    jsr binprint
+
+    printBinary($9110, $005F, 'h', 'l', 5)
+    printBinary(cursor, $005F-22, 113, ' ', 5)
+    printBinary(cursor, $005F+22*3, 114, ' ', 5)
+    printBinary($9112, $005F+22*2, 'o', 'i', 5)
+
+    printBinary($9125, $5D+22*12-4, '1', '0', 5)
+    printBinary($9124, $5D+22*12+5, '1', '0', 5)
 
  //   lda $C5         // Current key held down
     jsr $FFE4       // Kernal GETIN (Get character from keyboard)
-    cmp #81         // This is Q
+    cmp #81         // This is Q => Quit
     beq quit
-
+    cmp #66         // This is B => Move Cursor LEFT
+    bne nxt1
+    lda cursor
+    asl
+    bne nxt01
+    lda #$01
+nxt01:
+    sta cursor
+    jmp nxtdone
+nxt1:
+    cmp #78         // This is N => Move Cursor RIGHT
+    bne nxt2
+    lda cursor
+    lsr
+    bne nxt11
+    lda #$80
+nxt11:
+    sta cursor
+    jmp nxtdone
+nxt2:
+    cmp #73         // I => Set the selected as input
+    bne nxt3
+    lda cursor
+    eor #$FF        // Invert the bits
+    and $9112
+    sta $9112
+    jmp nxtdone
+nxt3:
+    cmp #79         // O => Set the selected as output
+    bne nxt4
+    lda cursor
+    ora $9112
+    sta $9112
+    jmp nxtdone
+nxt4:
+    cmp #72         // H => Set the selected as high
+    bne nxt5
+    lda cursor
+    ora $9110
+    sta $9110
+    jmp nxtdone
+nxt5:
+    cmp #76         // L => Set the selected as low
+    bne nxt6
+    lda cursor
+    eor #$FF        // Invert the bits
+    and $9110
+    sta $9110
+    jmp nxtdone
+nxt6:
+nxtdone:
     jmp update_portb
 
 quit:
@@ -43,8 +101,8 @@ quit:
     rts
 
 title:
-    .text "  port b controller   "
-    
+    .text "  user port monitor   "
+
 draw_text:
     ldx #$00
 draw_loop:
@@ -53,14 +111,37 @@ draw_loop:
     lda #$5
     sta $9600,x
     inx
-    cpx #$16
+    cpx #22
     bne draw_loop
     rts
+
+instr:
+    .text "        bit  ddr  val  keys:  b/n  i/o  h/l                        exit:  q            "
+draw_instr:
+    ldx #$00
+instr_loop:
+    lda instr,x
+    sta $1E00+10*22,x
+    lda #$7
+    sta $9600+10*22,x
+    inx
+    cpx #78
+    bne instr_loop
+    rts
+
+cursor:
+    .byte $01
 
 binprint_addr:
     .word $9110         // Read port 9110 (37136) porb b address (9112 = DR register)
 binprint_pos:
     .word $005D
+binprint_h:
+    .byte '1'
+binprint_l:
+    .byte '0'
+binprint_c:
+    .byte $5
 
 binprint:
 
@@ -88,27 +169,27 @@ bit_loop:
     and $FC
     beq bit_not_set // AND will set Z if the result is 0
     
-    lda #49         // bit is set = put character 1 in lda   (49 = "1") 
+    lda binprint_h  // bit is set = put character 1 in lda   (49 = "1") 
     jmp end_bit_loop
     
 bit_not_set:
-    lda #48         // bit is not set = put character 0 in lda   (48 = "0") 
+    lda binprint_l  // bit is not set = put character 0 in lda   (48 = "0") 
     
 end_bit_loop:
 
     sta ($FD),y     // Write the character on the screen (location 1E00 + 5D)
     
-    lda #$78
     clc
+    lda #$78
     adc $FE
     sta $FE
 
-//    lda #$5         // Choose a color
-//    sta ($FD),y     // Set the color of the charater on the screen (location 9600 + 5D)
+    lda binprint_c  // Choose a color
+    sta ($FD),y     // Set the color of the charater on the screen (location 9600 + 5D)
 
-    lda #$78
     clc
-    sbc $FE
+    lda #(-$78)
+    adc $FE
     sta $FE
 
     asl $FC         // Shift Left the $FC lacal variable to select the next bit
@@ -117,18 +198,29 @@ end_bit_loop:
     bne bit_loop    // Loop while Y > 0
     rts
 
-.function _16bit_nextArgument(arg) {
-	.if (arg.getType()==AT_IMMEDIATE)
-	.return CmdArgument(arg.getType(),>arg.getValue())
-	.return CmdArgument(arg.getType(),arg.getValue()+1)
+.function _16bitnextArgument(arg) {
+    .if (arg.getType()==AT_IMMEDIATE)
+    .return CmdArgument(arg.getType(),>arg.getValue())
+    .return CmdArgument(arg.getType(),arg.getValue()+1)
 }
 
-.pseudocommand add16 arg1 : arg2 : tar {
-.if (tar.getType()==AT_NONE) .eval tar=arg1
-		lda arg1
-        adc arg2
-        sta tar
-        lda _16bit_nextArgument(arg1)
-		adc _16bit_nextArgument(arg2)
-		sta _16bit_nextArgument(tar)
+.pseudocommand mov16 src:tar {
+ lda src
+ sta tar
+ lda _16bitnextArgument(src)
+ sta _16bitnextArgument(tar)
+}
+
+.pseudocommand mov src:tar {
+ lda src
+ sta tar
+}
+
+.macro printBinary(addr, scrOffset, charH, charL, color) {
+    mov16   #addr       : binprint_addr
+    mov16   #scrOffset  : binprint_pos
+    mov     #charH      : binprint_h
+    mov     #charL      : binprint_l
+    mov     #color      : binprint_c
+    jsr     binprint
 }

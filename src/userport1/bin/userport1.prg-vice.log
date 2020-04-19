@@ -62,8 +62,8 @@ Drive 8: RESET.
 Sound: Opened device `pulse', speed 44100Hz, fragment size 2,9ms, buffer size 101ms
 reSID: MOS6581, filter on, sampling rate 44100Hz - resampling, pass to 19845Hz
 AUTOSTART: Loading program '*'
-AUTOSTART: Entered ROM at $e5ec
-AUTOSTART: Left ROM for $0079
+AUTOSTART: Entered ROM at $e5ef
+AUTOSTART: Left ROM for $007c
 AUTOSTART: Turning Warp mode off
 AUTOSTART: Done.
 
