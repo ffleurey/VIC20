@@ -1,0 +1,11 @@
+.label bit_not_set=$116d
+.label draw_loop=$1146
+.label display=$1108
+.label draw_text=$1144
+.label bit_loop=$1162
+.label start=$1100
+.label quit=$1120
+.label end_bit_loop=$116f
+.label title=$112e
+.label print_portb=$1157
+.label update_portb=$1113
