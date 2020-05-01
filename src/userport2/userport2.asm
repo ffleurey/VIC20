@@ -28,8 +28,8 @@ update_portb:
     printBinary(cursor, $005F+22*3, 114, ' ', 5)
     printBinary($9112, $005F+22*2, 'o', 'i', 5)
 
-    printBinary($9125, $5D+22*12-4, '1', '0', 5)
-    printBinary($9124, $5D+22*12+5, '1', '0', 5)
+    printBinary(161, $5D+22*12-4, '1', '0', 5)
+    printBinary(162, $5D+22*12+5, '1', '0', 5)
 
  //   lda $C5         // Current key held down
     jsr $FFE4       // Kernal GETIN (Get character from keyboard)

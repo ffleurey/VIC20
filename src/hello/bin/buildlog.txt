@@ -1,0 +1,15 @@
+parsing
+flex pass 1
+flex pass 2
+flex pass 3
+Output pass
+Writing prg file: hello.prg
+
+Memory Map
+----------
+Default-segment:
+  $1001-$100c Basic Upstart
+  $1100-$114e Unnamed
+
+Writing Vice symbol file: hello.vs
+Writing Symbol file: hello.sym

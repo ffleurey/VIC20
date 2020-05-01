@@ -1,0 +1,17 @@
+.label bit_not_set=$120d
+.label binprint_addr=$11d5
+.label binprint_h=$11d9
+.label binprint_c=$11db
+.label start=$1100
+.label irq=$11a4
+.label end_bit_loop=$1210
+.label irq_rti=$11c7
+.label binprint=$11dc
+.label raster_wait=$11cd
+.label mainloop=$112f
+.label bit_loop=$1201
+.label quit=$118a
+.label irq_via2=$11bc
+.label irq_via1=$11b1
+.label binprint_pos=$11d7
+.label binprint_l=$11da

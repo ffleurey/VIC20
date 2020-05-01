@@ -1,0 +1,6 @@
+.label raster_wait=$1114
+.label mainloop=$1108
+.label start=$1100
+.label quit=$1136
+.label raster_wait3=$112c
+.label raster_wait2=$1120

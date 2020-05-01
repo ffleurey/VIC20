@@ -1,0 +1,17 @@
+.label bit_not_set=$11d0
+.label binprint_addr=$1198
+.label binprint_h=$119c
+.label draw_loop=$1187
+.label display=$1108
+.label binprint_c=$119e
+.label start=$1100
+.label end_bit_loop=$11d3
+.label main_loop=$110b {
+}
+.label title=$116f
+.label binprint=$119f
+.label draw_text=$1185
+.label bit_loop=$11c4
+.label quit=$1161
+.label binprint_pos=$119a
+.label binprint_l=$119d

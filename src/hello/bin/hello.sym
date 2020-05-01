@@ -1,0 +1,5 @@
+.label draw_loop=$113d
+.label draw_text=$113b
+.label start=$1100
+.label title=$110f
+.label colors=$1125
