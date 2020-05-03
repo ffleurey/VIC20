@@ -20,12 +20,16 @@ start:
     lda #>irq
     sta $0315
 
-    // Set the timer to 0x5686 (ie 1 frame at 1.018MHz)
+    // Set the timer to 0x5686 (0x5688 = 1 frame at 1.018MHz)
     // This modifies the speed of the jiffy clock
     lda #<$5686
     sta $9124
-    lda #>$5686
-    sta $9125
+    ldx #>$5686
+
+    // Sync after drawing the character screen
+    jsr raster_wait     // Wait until a specific line
+
+    stx $9125 // Start counting
 
     // Enable Timer 1/A free run on VIA 1
     lda $912b
@@ -49,161 +53,172 @@ mainloop:
     lda #31        
     sta $900F      
 
-
-    printBinary(161, $5D+22*4-4, '1', '0', 0)
-    printBinary(162, $5D+22*4+5, '1', '0', 0)
-
-
     jmp mainloop
 
 quit:
-    // set the IRQ routine pointer back to normal
-    sei
-    lda #<$EABF
-    sta $0314
-    lda #>$EABF
-    sta $0315
-    cli
-    // Set colors back to normal
-    lda #27        // 27 => Cyan border / White background
-    sta $900F       // 900F (36879) : Color of border and background
-    // Move the cursor to X=18 (row), Y=0 (column)
-    ldx #18
-    ldy #0
-    clc
-    jsr $FFF0       // Kernal PLOT (read or write cursor position)
-    rts
+    jmp $FED2       // Dirty jump to the Kernal BRK Handler to skip any cleanup and restore
 
 
-
-irq:        // The cpu state has been saved by the kernal
-
-    // Check if it is a via 2 interrupt
-    bit $912d
+irq:            // The cpu state has been saved by the kernal
+    bit $912d   // Check if it is a via 2 interrupt
     bmi irq_via2
-    //jmp irq_rti
-    // Let the kernal handle other interrupts
 irq_kernal:
     jmp $eabf     // jump to normal IRQ
 
 irq_via2:
-    // Read the low bytes of the counter to clear the interrupt flag
-    //bit  $9124  
-
     // Red border
     lda #26        
     sta $900F
+
+    printBinary(161, $5D+22*4-4, '1', '0', 0)
+    printBinary(162, $5D+22*4+5, '1', '0', 0)
+
+    jsr la_capture_one_bit
+
     jmp irq_kernal
-
-
-// This is what to do to return from interrupt if not calling the kernal routine.
-irq_rti:        // Restore cpu state and return from interrupt
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
-
-
 
 // This is an active wait on a specific raster line.    
 raster_wait:
     lda $9004
-    cmp #80    // Wait for line 80 (somewhere in the middle)
+    cmp #131    // Wait for line 80 (somewhere in the middle)
     bne raster_wait
     rts
 
 
-binprint_addr:
-    .word $9110         // Read port 9110 (37136) porb b address (9112 = DR register)
-binprint_pos:
-    .word $005D
-binprint_h:
-    .byte '1'
-binprint_l:
-    .byte '0'
-binprint_c:
-    .byte $5
 
-binprint:
+// Data for the logic analyser. 32 bytes (256 bits) for each channel
+// x 8 chanels = 256 bytes of data
+la_data:
+    .fill 256, 0 // Generates byte 0,0,0,0,0
+la_index:
+    .byte 0
+la_wrap:
+    .byte 22
+la_addr:
+    .word 162
+la_bit:
+    .byte %00100000
 
-    lda binprint_addr   // Put the adress of the regiter to zero page FD and FE
+la_index_y:
+    .byte 0
+
+la_capture_one_bit:
+
+   
+// Set the array index in Y 
+    lda la_index    
+    lsr             // Shift Right 3 times to keep the index betwwen 0 and 31
+    lsr
+    lsr
+    tay             // Put it in Y
+    sty la_index_y
+
+// Set the right bit in X
+    lda #%00000111
+    and la_index
+    tax
+    lda #%10000000
+bitsetloop:
+    cpx #0
+    beq bitsetloop_end
+    dex
+    lsr
+    jmp bitsetloop
+bitsetloop_end:
+    tax
+
+// Read the bit we are intereted in an store it
+    lda la_addr
     sta $FD
-    lda binprint_addr+1
+    lda la_addr+1
     sta $FE
-    ldy #$0
-    lda ($FD),y         // Load from address requested in binprint_addr
-    sta $FB             // Local variable in zeropage page (FB to FE are not used by the OS)
-    lda #$01            // First bit
-    sta $FC             // Local variable. Current bit, init 0x00000001
-    ldy #$08            // use Y as loop counter init 8
+    ldy #0
+    lda ($FD),y
+    and la_bit
+    bne bit_is_1
 
+bit_is_0:
+    txa
+    eor #$FF
+    ldy la_index_y
+    and la_data, y
+    sta la_data, y
+    jmp end_if_set_bit
+bit_is_1:
+    txa
+    ldy la_index_y
+    ora la_data, y
+    sta la_data, y
+
+end_if_set_bit:
+
+    jsr la_draw_line
+
+// Increment the index
+    inc la_index
+    lda la_wrap
+    asl
+    asl
+    asl
+    cmp la_index
+    bne done_incrementing
+    lda #0
+    sta la_index
+
+done_incrementing:
+
+    rts
+
+la_draw_line_pos:
+    .word $0000+22*12
+la_draw_line_color:
+    .byte 2
+
+la_draw_line:
     clc
     lda #$00            // Set the position of where to write on screen in FD FE
-    adc binprint_pos
+    adc la_draw_line_pos
     sta $FD
     lda #$1E
-    adc binprint_pos+1
+    adc la_draw_line_pos+1
     sta $FE
+    // Set the array index in Y 
+    lda la_index    
+    lsr             // Shift Right 3 times to keep the index betwwen 0 and 31
+    lsr
+    lsr
+    tay             // Put it in Y
+draw_current_char:
+    lda la_data, y
+    beq draw_0
+    cmp #$FF
+    beq draw_1
+    lda #102        // Mixed
+    jmp draw_char
+draw_0:
+    lda #100        // Down
+    jmp draw_char
+draw_1:
+    lda #128+100         // Up
+    jmp draw_char
+draw_char:
 
-bit_loop:
-    lda $FB
-    and $FC
-    beq bit_not_set // AND will set Z if the result is 0
-    
-    lda binprint_h  // bit is set = put character 1 in lda   (49 = "1") 
-    jmp end_bit_loop
-    
-bit_not_set:
-    lda binprint_l  // bit is not set = put character 0 in lda   (48 = "0") 
-    
-end_bit_loop:
-
-    sta ($FD),y     // Write the character on the screen (location 1E00 + 5D)
+    sta ($FD),y
     
     clc
     lda #$78
     adc $FE
     sta $FE
 
-    lda binprint_c  // Choose a color
+    lda la_draw_line_color  // Choose a color
     sta ($FD),y     // Set the color of the charater on the screen (location 9600 + 5D)
-
+    
+done_update_prev_color:
     clc
     lda #(-$78)
     adc $FE
     sta $FE
 
-    asl $FC         // Shift Left the $FC lacal variable to select the next bit
-
-    dey             // Decrement Y
-    bne bit_loop    // Loop while Y > 0
     rts
 
-.function _16bitnextArgument(arg) {
-    .if (arg.getType()==AT_IMMEDIATE)
-    .return CmdArgument(arg.getType(),>arg.getValue())
-    .return CmdArgument(arg.getType(),arg.getValue()+1)
-}
-
-.pseudocommand mov16 src:tar {
- lda src
- sta tar
- lda _16bitnextArgument(src)
- sta _16bitnextArgument(tar)
-}
-
-.pseudocommand mov src:tar {
- lda src
- sta tar
-}
-
-.macro printBinary(addr, scrOffset, charH, charL, color) {
-    mov16   #addr       : binprint_addr
-    mov16   #scrOffset  : binprint_pos
-    mov     #charH      : binprint_h
-    mov     #charL      : binprint_l
-    mov     #color      : binprint_c
-    jsr     binprint
-}
+#import "../_lib/PrintBinary.asm"
