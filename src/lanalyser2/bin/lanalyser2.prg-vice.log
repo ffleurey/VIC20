@@ -45,16 +45,16 @@ Joystick: Warning - Cannot open joystick device `/dev/input/js3'.
 Joystick: Warning - Cannot open joystick device `/dev/input/js4'.
 Joystick: Warning - Cannot open joystick device `/dev/input/js5'.
 Keyboard: Loading keymap `/snap/vice-jz/current/lib64/vice/VIC20/gtk3_sym.vkm'.
-AUTOSTART: Autodetecting image type of `customc1.prg'.
+AUTOSTART: Autodetecting image type of `lanalyser2.prg'.
 Filesystem Image Probe: Error - Import GCR: Unknown GCR image version 49.
-Filesystem Image: Unknown disk image `customc1.prg'.
-Tape: Error - Cannot open file `customc1.prg'
-AUTOSTART: Loading PRG file `customc1.prg' with autostart disk image.
+Filesystem Image: Unknown disk image `lanalyser2.prg'.
+Tape: Error - Cannot open file `lanalyser2.prg'
+AUTOSTART: Loading PRG file `lanalyser2.prg' with autostart disk image.
 AUTOSTART: Turning true drive emulation off.
 AUTOSTART: Turning true drive emulation on.
 AUTOSTART: Resetting the machine to autostart '*'
 AUTOSTART: Turning Warp mode on
-AUTOSTART: `customc1.prg' recognized as program/p00 file.
+AUTOSTART: `lanalyser2.prg' recognized as program/p00 file.
 Main CPU: starting at ($FFFC).
 Main CPU: RESET.
 Drive 8: RESET.
@@ -62,10 +62,10 @@ Drive 8: RESET.
 Sound: Opened device `pulse', speed 44100Hz, fragment size 2,9ms, buffer size 101ms
 reSID: MOS6581, filter on, sampling rate 44100Hz - resampling, pass to 19845Hz
 AUTOSTART: Loading program '*'
-AUTOSTART: Entered ROM at $e5e8
+AUTOSTART: Entered ROM at $e5ea
 AUTOSTART: Searching for ...
 AUTOSTART: Loading
-AUTOSTART: Entered ROM at $ef5b
+AUTOSTART: Entered ROM at $e4ac
 AUTOSTART: Ready
 AUTOSTART: Turning Warp mode off
 AUTOSTART: Starting program.

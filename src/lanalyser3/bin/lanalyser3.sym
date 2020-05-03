@@ -1,0 +1,55 @@
+.label binprint_addr=$1315
+.label la_draw_line_pos=$127b
+.label end_bit_loop=$1350
+.label cc_bytes_loop=$12f2
+.label la_bit=$1204
+.label bit_loop=$1341
+.label bitsetloop_end=$1226
+.label got_q=$1099
+.label la_data=$1100
+.label got_k=$108c {
+}
+.label disable_custom_char=$12d5
+.label got_j=$1072 {
+}
+.label end_if_set_bit=$1253
+.label enable_custom_char=$12ca
+.label middle_of_the_frame=$10e7
+.label irq_kernal=$10a1
+.label binprint=$131c
+.label bit_is_1=$1249
+.label bit_is_0=$123a
+.label raster_wait=$10f8
+.label la_capture_one_bit=$1206
+.label loop_over_bits=$1227
+.label binprint_h=$1319
+.label cc_char_loop=$12ec
+.label binprint_c=$131b
+.label bitsetloop=$121d
+.label irq_rti=$10f2
+.label draw_char_loop=$1299
+.label la_wrap=$1201
+.label la_index_y=$1205
+.label done_incrementing=$127a
+.label la_draw_line=$127e
+.label cc_char_loop_end=$1314
+.label mainloop=$1046
+.label cc_bytes_loop_end=$12fd
+.label la_index=$1200
+.label got_u=$1065 {
+}
+.label custom_characters_addr=$12de
+.label binprint_pos=$1317
+.label got_t=$107f {
+}
+.label binprint_l=$131a
+.label bit_not_set=$134d
+.label create_custom_characters=$12e0
+.label end_draw_char_loop=$12c9
+.label start=$1010
+.label irq=$109c
+.label top_of_the_frame=$10ae
+.label la_draw_line_color=$127d
+.label la_addr=$1202
+.label irq_via2=$10a4
+.label end_loop_over_bits=$1264

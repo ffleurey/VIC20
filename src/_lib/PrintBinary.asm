@@ -92,3 +92,12 @@ end_bit_loop:
     mov     #color      : binprint_c
     jsr     binprint
 }
+
+.macro printBinaryPtr(addrptr, scrOffset, charH, charL, color) {
+    mov16   addrptr       : binprint_addr
+    mov16   #scrOffset  : binprint_pos
+    mov     #charH      : binprint_h
+    mov     #charL      : binprint_l
+    mov     #color      : binprint_c
+    jsr     binprint
+}

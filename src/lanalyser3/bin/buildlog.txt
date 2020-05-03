@@ -1,0 +1,15 @@
+parsing
+flex pass 1
+flex pass 2
+flex pass 3
+Output pass
+Writing prg file: lanalyser3.prg
+
+Memory Map
+----------
+Default-segment:
+  $1001-$100c Basic Upstart
+  $1010-$136a Program Code
+
+Writing Vice symbol file: lanalyser3.vs
+Writing Symbol file: lanalyser3.sym
