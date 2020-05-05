@@ -1,5 +1,7 @@
 #importonce
 
+#import "utils.asm"
+
 binprint_addr:
     .word $9110         // Read port 9110 (37136) porb b address (9112 = DR register)
 binprint_pos:
@@ -66,23 +68,6 @@ end_bit_loop:
     bne bit_loop    // Loop while Y > 0
     rts
 
-.function _16bitnextArgument(arg) {
-    .if (arg.getType()==AT_IMMEDIATE)
-    .return CmdArgument(arg.getType(),>arg.getValue())
-    .return CmdArgument(arg.getType(),arg.getValue()+1)
-}
-
-.pseudocommand mov16 src:tar {
- lda src
- sta tar
- lda _16bitnextArgument(src)
- sta _16bitnextArgument(tar)
-}
-
-.pseudocommand mov src:tar {
- lda src
- sta tar
-}
 
 .macro printBinary(addr, scrOffset, charH, charL, color) {
     mov16   #addr       : binprint_addr

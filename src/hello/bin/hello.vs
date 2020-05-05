@@ -1,6 +1,6 @@
-al C:113d .draw_loop
-al C:113b .draw_text
+al C:1133 .end_of_string
+al C:1127 .print_loop
+al C:1125 .print_string
 al C:1100 .start
 al C:100b .upstartEnd
-al C:110f .title
-al C:1125 .colors
+al C:1117 .message

@@ -10,7 +10,14 @@ start:
 
     // ROM Clear screen
     jsr $e55f       
-    jsr draw_text
+
+    // Move the cursor to X=18 (row), Y=0 (column)
+    ldx #2
+    ldy #6
+    clc
+    jsr $FFF0       // Kernal PLOT (read or write cursor position)
+
+    jsr print_string
     
     // Move the cursor to X=18 (row), Y=0 (column)
     ldx #16
@@ -19,19 +26,21 @@ start:
     jsr $FFF0       // Kernal PLOT (read or write cursor position)
     rts 
 
-title:
-    .text "    hello vic-20 !    "
-colors:
-    .byte 0,0,0,0,0,2,3,4,5,0,6,7,2,3,4,5,0,6,0,0,0,0
+message:
+    .byte 28 // RED
+    .byte 18 // REVERSE ON
+    .text "HELLO:VIC"
+    .byte 146 // REVERSE OFF
+    .byte 31 // BLUE
+    .byte 0
     
-draw_text:
-    ldx #$00
-draw_loop:
-    lda title,x
-    sta $1E00+22*6,x    // Set the character on the screen
-    lda colors,x
-    sta $9600+22*6,x    // Set the color of the character
+print_string:
+    ldx #0
+print_loop:
+    lda message, x
+    beq end_of_string
+    jsr $E742       // Kernal output character to screen
     inx
-    cpx #$16
-    bne draw_loop
+    jmp print_loop
+end_of_string:
     rts

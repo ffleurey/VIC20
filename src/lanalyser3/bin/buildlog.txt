@@ -9,7 +9,7 @@ Memory Map
 ----------
 Default-segment:
   $1001-$100c Basic Upstart
-  $1010-$136a Program Code
+  $100d-$13fe Program Code
 
 Writing Vice symbol file: lanalyser3.vs
 Writing Symbol file: lanalyser3.sym

@@ -9,7 +9,7 @@ Memory Map
 ----------
 Default-segment:
   $1001-$100c Basic Upstart
-  $1100-$114e Unnamed
+  $1100-$1133 Unnamed
 
 Writing Vice symbol file: hello.vs
 Writing Symbol file: hello.sym

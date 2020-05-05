@@ -1,5 +1,5 @@
-.label draw_loop=$113d
-.label draw_text=$113b
+.label end_of_string=$1133
+.label print_loop=$1127
+.label print_string=$1125
 .label start=$1100
-.label title=$110f
-.label colors=$1125
+.label message=$1117

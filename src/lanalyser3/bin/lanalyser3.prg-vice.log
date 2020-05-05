@@ -66,3 +66,6 @@ AUTOSTART: Entered ROM at $e5ec
 AUTOSTART: Left ROM for $0079
 AUTOSTART: Turning Warp mode off
 AUTOSTART: Done.
+
+Exiting...
+Sound: Closing device `pulse'
