@@ -2,12 +2,12 @@ parsing
 flex pass 1
 flex pass 2
 Output pass
-Writing prg file: LogicAnalyser.prg
+Writing prg file: LogicAnalyser2.prg
 
 Memory Map
 ----------
 Default-segment:
-  $2000-$2211 Default
+  $2000-$2213 Default
 
-Writing Vice symbol file: LogicAnalyser.vs
-Writing Symbol file: LogicAnalyser.sym
+Writing Vice symbol file: LogicAnalyser2.vs
+Writing Symbol file: LogicAnalyser2.sym

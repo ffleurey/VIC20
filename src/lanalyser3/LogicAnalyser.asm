@@ -1,6 +1,6 @@
 #importonce
 
-#import "utils.asm"
+#import "../_lib/utils.asm"
 
 .macro setLogicAnalyserAddr(addr) {
     mov16 #addr : la_addr
