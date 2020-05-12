@@ -100,6 +100,71 @@ end_if_set_bit:
 end_loop_over_bits:
     rts
 
+
+/*****************************************************************************/
+/*       Cature and store 1 bit of data at the end and shift the buffer
+/*****************************************************************************/
+
+la_captured:
+    .byte 0
+
+la_capture_one_bit_and_shift:
+    
+    // Put the bits to capture at addr "la_addr" in la_captured
+    lda la_addr
+    sta $FD
+    lda la_addr+1
+    sta $FE
+    ldy #0
+    lda ($FD),y
+    sta la_captured
+
+    // Put the start of the buffer in 0 page FD FE
+    lda #<la_data
+    sta $FD
+    lda #>la_data
+    sta $FE
+
+    // Init with the msb
+    lda #%10000000
+    sta la_bit
+    
+loop_over_8_bits:
+    ldy #c_bufferwidth-1       // Use Y to loop over the buffer for that bit
+    lda la_captured
+    and la_bit
+    bne captured_a_1
+    // Clear the carry to shift a 0
+    clc         
+    jmp shift_buffer
+captured_a_1:
+    // Set the carry to shift a 1
+    sec        
+shift_buffer:
+    // Shift the bytes left
+    lda ($FD),y
+    rol
+    sta ($FD),y
+    dey
+    bmi end_shift_loop
+    jmp shift_buffer
+
+end_shift_loop:
+    // Increment address to the next line
+    clc
+    lda #c_bufferwidth
+    adc $FD
+    sta $FD
+    bcc done_inc_addr
+    inc $FE     // Add the carry
+
+done_inc_addr:
+    // shift to the next bit
+    lsr la_bit
+    bne loop_over_8_bits
+
+    rts
+
 /*****************************************************************************/
 /*               Clear the data in the buffer (fill with 0s)
 /*****************************************************************************/
@@ -115,6 +180,26 @@ la_clear_buffer_loop:
     iny
     cpy #c_bufferwidth*c_bufferheight
     bne la_clear_buffer_loop
+    rts
+
+/*****************************************************************************/
+/*             Full update of the screen with the buffer data
+/*****************************************************************************/
+la_draw_full_screen:
+    clc
+    lda la_screen_addr            // Set the position of where to write on screen in FD FE
+    adc la_draw_line_pos
+    sta $FD
+    lda la_screen_addr+1
+    adc la_draw_line_pos+1
+    sta $FE
+    ldy #0      // use Y as the loop counter
+copy_byte_loop:
+    lda la_data, y
+    sta ($FD),y
+    iny
+    cpy #c_bufferwidth*c_bufferheight
+    bne copy_byte_loop
     rts
 
 /*****************************************************************************/
