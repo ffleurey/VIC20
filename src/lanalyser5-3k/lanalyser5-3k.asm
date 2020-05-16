@@ -99,7 +99,7 @@ got_p:
     jmp mainloop
 
 pause:
-    .byte 1
+    .byte 0
 
 help:
     .byte 30 // GREEN

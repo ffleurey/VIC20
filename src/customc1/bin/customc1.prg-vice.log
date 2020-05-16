@@ -65,11 +65,8 @@ AUTOSTART: Loading program '*'
 AUTOSTART: Entered ROM at $e5e8
 AUTOSTART: Searching for ...
 AUTOSTART: Loading
-AUTOSTART: Entered ROM at $ef5b
+AUTOSTART: Entered ROM at $ef66
 AUTOSTART: Ready
 AUTOSTART: Turning Warp mode off
 AUTOSTART: Starting program.
 AUTOSTART: Done.
-
-Exiting...
-Sound: Closing device `pulse'

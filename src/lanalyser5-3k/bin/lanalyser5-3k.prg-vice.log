@@ -66,3 +66,7 @@ AUTOSTART: Entered ROM at $e5e8
 AUTOSTART: Left ROM for $0080
 AUTOSTART: Turning Warp mode off
 AUTOSTART: Done.
+Writing configuration file `/home/franck/snap/vice-jz/84/.config/vice/vicerc'.
+
+Exiting...
+Sound: Closing device `pulse'
