@@ -1,0 +1,50 @@
+.label joystick_down=$10bc {
+  .label after_reset=$10cb
+}
+.label binprint_addr=$1183
+.label read_joystick=$10e8
+.label wrap_around=$1160
+.label end_bit_loop=$11be
+.label clear_screen_loop1=$113e
+.label player_row=$1010
+.label clear_screen_loop2=$1144
+.label write_to_bottom_of_screen=$1178
+.label raster_wait_after_screen=$1020
+.label joy_not_right=$10a8
+.label bit_loop=$11af
+.label end_loop_set_row=$1165
+.label joystick_prev=$1013
+.label joystick_fire=$10e7
+.label done_draw_player=$117b
+.label init_screen_loop2=$1131
+.label init_screen_loop1=$112b
+.label joy_not_up=$1090
+.label joystick=$1012
+.label loop_set_row=$1155
+.label clear_screen=$113a
+.label init_screen=$1122
+.label binprint=$118a
+.label joy_not_left=$10a0
+.label raster_wait_wrap_around=$1076
+.label binprint_h=$1187
+.label binprint_c=$1189
+.label process_joystick_events=$1080
+.label joystick_right=$10d7 {
+  .label after_reset=$10e6
+}
+.label joystick_up=$10b1 {
+  .label after_reset=$10bb
+}
+.label update_screen=$117c
+.label player_col=$1011
+.label joy_not_down=$1098
+.label binprint_pos=$1185
+.label binprint_l=$1188
+.label bit_not_set=$11bb
+.label joystick_left=$10cc {
+  .label after_reset=$10d6
+}
+.label start=$1014
+.label joy_not_fire=$10b0
+.label main_loop=$101a
+.label draw_player=$114d
