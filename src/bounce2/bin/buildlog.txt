@@ -3,13 +3,13 @@ flex pass 1
 flex pass 2
 flex pass 3
 Output pass
-Writing prg file: bounce1.prg
+Writing prg file: bounce2.prg
 
 Memory Map
 ----------
 Default-segment:
   $1001-$100c Basic Upstart
-  $1010-$1265 Program
+  $1010-$12e3 Program
 
-Writing Vice symbol file: bounce1.vs
-Writing Symbol file: bounce1.sym
+Writing Vice symbol file: bounce2.vs
+Writing Symbol file: bounce2.sym

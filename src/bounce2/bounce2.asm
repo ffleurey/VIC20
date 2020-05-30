@@ -42,12 +42,12 @@ joystick_prev:
     .byte $FF
 
 ball_ypos:
-    .byte $F0       // Top of the trajectory (16.0000)
+    .word $0F00       // Top of the trajectory (15,00)
 ball_vspeed:
-    .byte 0         // Speed is null
+    .word 0         // Speed is null
 ball_direction:
     .byte 0         // Going down
-.const BALL_GRAVITY         = 1         // Only fully works with 1
+.const BALL_GRAVITY         = 20
 
 
 start:
@@ -59,8 +59,10 @@ start:
     lda #0
     sta ball_vspeed
     sta ball_direction
-    lda #$F0
+    lda #$0F
     sta ball_ypos
+    lda #$00
+    sta ball_ypos+1
 
 
 main_loop:
@@ -78,9 +80,12 @@ main_loop:
  
     // Update the screen next frame
     jsr update_screen
-    printBinary(ball_direction, 2, '1', '0', 6)
-    printBinary(ball_vspeed, 22*1+2, '1', '0', 6)
-    printBinary(ball_ypos, 22*2+2, '1', '0', 6)
+    printBinary(ball_direction, 1, '1', '0', 6)
+    printBinary(ball_vspeed, 22*1+1, '1', '0', 6)
+    printBinary(ball_vspeed+1, 22*1+11, '1', '0', 6)
+
+    printBinary(ball_ypos, 22*2+1, '1', '0', 6)
+    printBinary(ball_ypos+1, 22*2+11, '1', '0', 6)
 
     // Wait for the rster line counter to wrap around
     raster_wait_wrap_around:
@@ -99,17 +104,37 @@ step_game: {
 going_up:
     // Decrease the speed
     sec
-    lda ball_vspeed
+    lda ball_vspeed+1
     sbc #BALL_GRAVITY
+    sta ball_vspeed+1
+    lda ball_vspeed
+    sbc #0
     sta ball_vspeed
+
     bcs still_going_up
 
-    eor #$FF
+    // lda ball_vspeed+1
+    // eor #$FF
+    // sta ball_vspeed+1
+    // lda ball_vspeed
+    // eor #$FF
+    // sta ball_vspeed
+
+    lda #0
+    sta ball_vspeed+1
     sta ball_vspeed
+
+    // reset speed and height
+
 
     // Reached the top, start to go down
     dec ball_direction      // Set the direction to 0 = DOWN
+
+    // ball_ypos = ball_ypos - ball_vspeed
     sec
+    lda ball_ypos+1
+    sbc ball_vspeed+1
+    sta ball_ypos+1
     lda ball_ypos
     sbc ball_vspeed
     sta ball_ypos
@@ -118,45 +143,52 @@ going_up:
 still_going_up:
 
     clc
+    lda ball_ypos+1
+    adc ball_vspeed+1
+    sta ball_ypos+1
     lda ball_ypos
     adc ball_vspeed
     sta ball_ypos
-    bcs stuck_on_top
     jmp end_step
 
-stuck_on_top:
-    lda #$FF
-    sta ball_ypos
-    jmp end_step
 
 going_down:
     // Increase the speed
     clc
-    lda ball_vspeed
+    lda ball_vspeed+1
     adc #BALL_GRAVITY
+    sta ball_vspeed+1
+    lda ball_vspeed
+    adc #0
     sta ball_vspeed
     
     // Calculate new position
-    sec
+sec
+    lda ball_ypos+1
+    sbc ball_vspeed+1
+    sta ball_ypos+1
     lda ball_ypos
     sbc ball_vspeed
     sta ball_ypos
 
     // Bounce if needed
     bcs end_step            // We are done if the result is still positive
+
+
+    lda ball_ypos+1
+    eor #$FF
+    sta ball_ypos+1
+    lda ball_ypos
     eor #$FF
     sta ball_ypos
+    
     inc ball_direction      // Set the direction to 1 = UP
 
 
 end_step:
 
-    // Update the ball column
-    lda ball_ypos
-    lsr
-    lsr
-    lsr
-    lsr
+    // Update the ball column with the top byte of ball_ypos
+    lda ball_ypos 
     sta player_row
     sec
     lda #SCREEN_ROWS-1
